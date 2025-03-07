@@ -26,6 +26,7 @@ messaging.onBackgroundMessage(function(payload) {
     const notificationOptions = {
         body: payload.data.text || "Time for your task!",
         icon: '/doIt/icon-144x144.png',
+        badge: '/doIt/icon-144x144.png',
         tag: payload.data.id,
         requireInteraction: true // Keep notification until user interacts
     };
@@ -72,4 +73,12 @@ self.addEventListener('periodicsync', async (event) => {
 
         await self.registration.storage.set('reminders', JSON.stringify(reminders));
     }
+});
+
+self.addEventListener('install', (event) => {
+    console.log('Service Worker installing...');
+});
+
+self.addEventListener('activate', (event) => {
+    console.log('Service Worker activating...');
 });
