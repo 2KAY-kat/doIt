@@ -37,7 +37,7 @@ messaging.onBackgroundMessage(function(payload) {
         badge: '/doIt/icon-144x144.png',
         tag: payload.data.id,
         requireInteraction: true,
-        sound: '/doIt/notification.mp3',
+        sound: '/doIt/notification.wav',
         vibrate: [200, 100, 200],
         actions: [
             { action: 'complete', title: 'Mark Complete' },
