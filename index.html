@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="icon-144x144.png" type="image/x-icon">
     <title>doIt</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
@@ -19,6 +20,64 @@
         <ul id="todo-list"></ul>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
+    <script type="module" src="firebase.js"></script>
+
 </body>
 </html>
+
+<!---
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
+  authDomain: "doit-2b4af.firebaseapp.com",
+  projectId: "doit-2b4af",
+  storageBucket: "doit-2b4af.firebasestorage.app",
+  messagingSenderId: "672989037293",
+  appId: "1:672989037293:web:3af2552677820a945382e4",
+  measurementId: "G-BQ2BQ96JTF"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+
+/// scripts instead
+
+
+
+
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
+    authDomain: "doit-2b4af.firebaseapp.com",
+    projectId: "doit-2b4af",
+    storageBucket: "doit-2b4af.firebasestorage.app",
+    messagingSenderId: "672989037293",
+    appId: "1:672989037293:web:3af2552677820a945382e4",
+    measurementId: "G-BQ2BQ96JTF"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+-->

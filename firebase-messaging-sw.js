@@ -1,24 +1,54 @@
-importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js');
+// Import Firebase scripts for service worker
+importScripts('https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/11.4.0/firebase-messaging.js');
 
+// Ensure firebase is available globally
+const firebase = self.firebase;
+// Initialize Firebase in the Service Worker
 firebase.initializeApp({
-    apiKey: "THE_API_KEY_#",
-    authDomain: "THE_DOIT_DOMAIN.firebaseapp.com",
-    projectId: "THE_DOIT_ID",
-    storageBucket: "THE_DOIT_ID.appspot.com",
-    messagingSenderId: "THE_SENDER_ID",
-    appId: "THE_DOIT_ID",
-    measurementId: "THE_DOIT_MEASUREMENT_ID" 
+    apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
+    authDomain: "doit-2b4af.firebaseapp.com",
+    projectId: "doit-2b4af",
+    storageBucket: "doit-2b4af.appspot.com",
+    messagingSenderId: "672989037293",
+    appId: "1:672989037293:web:3af2552677820a945382e4",
+    measurementId: "G-BQ2BQ96JTF"
 });
 
+// Get Firebase Messaging Instance
 const messaging = firebase.messaging();
 
+// Handle Background Messages
 messaging.onBackgroundMessage(function(payload) {
-    const title = payload.notification.title;
-    const options = {
-        body: payload.notification.body,
-        icon: payload.notification.icon
+    console.log("📩 Received background message: ", payload);
+
+    const notificationTitle = payload.notification?.title || "New Notification";
+    const notificationOptions = {
+        body: payload.notification?.body || "You have a new message.",
+        icon: payload.notification?.icon || "/icon-144x144.png",
+        badge: "/icon-144x144.png",
+        vibrate: [200, 100, 200],
+        actions: [
+            { action: "open", title: "View" }
+        ]
     };
 
-    self.registration.showNotification(title, options);
+    // Show Notification
+    self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+// Handle Notification Clicks
+self.addEventListener("notificationclick", (event) => {
+    event.notification.close();
+    
+    event.waitUntil(
+        self.clients.matchAll({ type: "window", includeUncontrolled: true })
+            .then((clientList) => {
+                if (clientList.length > 0) {
+                    clientList[0].focus();
+                } else {
+                    self.clients.openWindow("/"); // Adjust this if your app URL is different
+                }
+            })
+    );
 });

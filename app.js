@@ -1,54 +1,66 @@
-//service worker registration code type shit
+// Import Firebase modules (ES Module syntax)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-messaging.js";
+
+// Service Worker Registration
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('firebase-messaging-sw.js')
-    .then(registration => {
-        console.log('Registered Service worker successffully: ', registration);
-    })
-    .catch(error => {
-        console.log('Failed to Register Service worker: ', error);
-    });
+        .then(registration => {
+            console.log('Service Worker registered successfully:', registration);
+        })
+        .catch(error => {
+            console.log('Service Worker registration failed:', error);
+        });
 }
 
-//firebase configuration
+// Firebase Configuration
 const firebaseConfig = {
-    apiKey: "THE_API_KEY_#",
-    authDomain: "THE_DOIT_DOMAIN.firebaseapp.com",
-    projectId: "THE_DOIT_ID",
-    storageBucket: "THE_DOIT_ID.appspot.com",
-    messagingSenderId: "THE_SENDER_ID",
-    appId: "THE_DOIT_ID",
-    measurementId: "THE_DOIT_MEASUREMENT_ID" 
+    apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
+    authDomain: "doit-2b4af.firebaseapp.com",
+    projectId: "doit-2b4af",
+    storageBucket: "doit-2b4af.appspot.com",
+    messagingSenderId: "672989037293",
+    appId: "1:672989037293:web:3af2552677820a945382e4",
+    measurementId: "G-BQ2BQ96JTF"
 };
-firebase.initializeApp(firebaseConfig);
 
-const messaging = firebase.messaging();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
+// Firebase Messaging Instance
+const messaging = getMessaging(app);
+
+// Request Notification Permission
 Notification.requestPermission().then(permission => {
     if (permission === "granted") {
-        console.log("Allowed to receive notifications from this app.");
-        messaging.getToken({vapidKey: "THE_DOIT_PUBLIC_VAPID_KEY"}).then(currentToken => {
-            if (currentToken) {
-                console.log('FCM Token:', currentToken);
+        console.log("✅ Notifications are allowed!");
 
-                localStorage.setItem('fcm_token', currentToken);
-            } else {
-                console.log('No Registration Token is available rn.');
-            }
-        }).catch(error => {
-            console.log('There was an Error while getting the Token:', error);
-        });
+        // Get Firebase Token
+        getToken(messaging, { vapidKey: "BN9kPeitTHd1810RpAhmzC_Vqxd61gjxUIIb_3-p6WO9IB_vMP38oZSM-lfczmnzXT0424tIzBiEvPc5HaNvq9o" })
+            .then(currentToken => {
+                if (currentToken) {
+                    console.log('FCM Token:', currentToken);
+                    localStorage.setItem('fcm_token', currentToken);
+                } else {
+                    console.log('No Registration Token is available.');
+                }
+            })
+            .catch(error => {
+                console.log('Error while getting the Token:', error);
+            });
+    } else {
+        console.log("❌ Notifications are not allowed!");
     }
 });
 
-
-//doIt form submission
-document.getElementById('todo-form').addEventListener('submit', function(e) {
+// To-Do Form Submission
+document.getElementById('todo-form').addEventListener('submit', function (e) {
     e.preventDefault();
 
     const todoInput = document.getElementById('todo-input');
     const reminderInput = document.getElementById('reminder-input');
 
-    const todoText = todoInput.ariaValueMax;
+    const todoText = todoInput.value;
     const reminderTime = new Date(reminderInput.value);
 
     if (todoText && reminderTime) {
@@ -59,11 +71,11 @@ document.getElementById('todo-form').addEventListener('submit', function(e) {
     }
 });
 
-//doIt storage implemanattion to localStorage
+// Add To-Do to Local Storage
 function addTodoToStorage(text, reminderTime) {
     let todos = JSON.parse(localStorage.getItem('todos')) || [];
-    
-    const  todo = {
+
+    const todo = {
         text,
         reminderTime,
         isCompleted: false
@@ -74,7 +86,7 @@ function addTodoToStorage(text, reminderTime) {
     renderTodos();
 }
 
-//doIt rendering imple...
+// Render To-Dos
 function renderTodos() {
     const todoList = document.getElementById('todo-list');
     todoList.innerHTML = '';
@@ -83,40 +95,38 @@ function renderTodos() {
     todos.forEach((todo, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
-        ${todo.text} <button onClick="removeTodo(${index})">Delete</button>
+            ${todo.text} <button onClick="removeTodo(${index})">Delete</button>
         `;
         todoList.appendChild(li);
     });
 }
 
-//doIt Removing Imple...
-function removeTodo(index) {
+// Remove To-Do
+window.removeTodo = function(index) {
     let todos = JSON.parse(localStorage.getItem('todos')) || [];
-
     todos.splice(index, 1);
-    localStorage.setItem('toods', JSON.stringify(todos));
-
-    renderTodos();
+    localStorage.setItem('todos', JSON.stringify(todos));
+    renderTodos(); // Call renderTodos instead of removeTodo
 }
 
-//doIt Reminder Imple...
+// Schedule Reminder
 function scheduleReminder(todoText, reminderTime) {
     const now = new Date();
     const delay = reminderTime - now;
 
-    if(delay > 0) {
+    if (delay > 0) {
         setTimeout(() => {
             sendPushNotification(todoText);
         }, delay);
     }
 }
 
-//doIt Send Notification {pushnotif.}
+// Send Push Notification
 function sendPushNotification(todoText) {
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification("doIt Reminder", {
             body: `It's time to: ${todoText}`,
-            icon: `icon.png`
+            icon: 'icon-144x144.png'
         });
     }
 }
