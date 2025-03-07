@@ -7,7 +7,10 @@
     <title>doIt</title>
     <link rel="stylesheet" href="/doIt/styles.css">
     <link rel="manifest" href="/doIt/manifest.json">
-    <link rel="preload" href="/doIt/notification.wav" as="fetch" crossorigin>
+    <!-- Remove preload and add audio element instead -->
+    <audio id="notification-sound" preload="none">
+        <source src="/doIt/notification.wav" type="audio/wav">
+    </audio>
 </head>
 <body>
     <div class="app">
