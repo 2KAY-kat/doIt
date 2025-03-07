@@ -37,7 +37,7 @@ messaging.onBackgroundMessage(function(payload) {
         badge: '/doIt/icon-144x144.png',
         tag: payload.data.id,
         requireInteraction: true,
-        sound: '/doIt/notification.wav',
+        sound: '/doIt/notification.wav',  // Make sure this matches your file name exactly
         vibrate: [200, 100, 200],
         actions: [
             { action: 'complete', title: 'Mark Complete' },
@@ -45,13 +45,21 @@ messaging.onBackgroundMessage(function(payload) {
             { action: 'edit', title: 'Edit Task' }
         ],
         renotify: true,
-        data: payload.data,
-        silent: false,
+        data: {
+            ...payload.data,
+            sound: '/doIt/notification.wav'  // Add sound to data
+        },
+        silent: false,  // Important: must be false to play sound
         timestamp: Date.now(),
         group: 'doIt-tasks'
     };
 
-    return self.registration.showNotification(notificationTitle, notificationOptions);
+    // Play sound manually as fallback
+    self.registration.showNotification(notificationTitle, notificationOptions)
+        .then(() => {
+            const audio = new Audio('/doIt/notification.wav');
+            return audio.play().catch(err => console.log('Audio playback failed:', err));
+        });
 });
 
 // Unified notification click handler
