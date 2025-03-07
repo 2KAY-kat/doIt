@@ -16,7 +16,7 @@ if ('serviceWorker' in navigator) {
 // Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
-    authDomain: "doit-2b4af.firebaseapp.com",
+    authDomain: "2KAY-kat.github.io",
     projectId: "doit-2b4af",
     storageBucket: "doit-2b4af",
     messagingSenderId: "672989037293",
