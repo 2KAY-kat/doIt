@@ -18,7 +18,7 @@ if ('serviceWorker' in navigator) {
 // Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
-    authDomain: "2kay-kat.github.io",
+    authDomain: "doit-2b4af.firebaseapp.com", // Update this
     projectId: "doit-2b4af",
     storageBucket: "doit-2b4af.appspot.com",
     messagingSenderId: "672989037293",
@@ -117,7 +117,6 @@ async function scheduleReminder(todoText, reminderTime) {
     const delay = reminderTime - now;
 
     if (delay > 0) {
-        // Store reminder in both localStorage and IndexedDB for service worker
         const reminder = {
             id: Date.now().toString(),
             text: todoText,
@@ -125,30 +124,27 @@ async function scheduleReminder(todoText, reminderTime) {
             notified: false
         };
 
-        // Store in localStorage
-        let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
-        reminders.push(reminder);
-        localStorage.setItem('reminders', JSON.stringify(reminders));
-
         try {
-            // Register periodic sync for background checks
-            const registration = await navigator.serviceWorker.ready;
-            if ('periodicSync' in registration) {
-                await registration.periodicSync.register('check-reminders', {
-                    minInterval: 60000 // Check every minute
-                });
-            }
+            // Store in localStorage
+            let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+            reminders.push(reminder);
+            localStorage.setItem('reminders', JSON.stringify(reminders));
 
-            // Schedule immediate timeout for foreground notifications
-            setTimeout(() => {
-                if (document.visibilityState === 'visible') {
-                    sendPushNotification(todoText);
-                }
-            }, delay);
+            // Register service worker if not already registered
+            const registration = await navigator.serviceWorker.ready;
+
+            // Schedule notification using service worker
+            await registration.showNotification("doIt Reminder", {
+                body: `It's time to: ${todoText}`,
+                icon: '/doIt/icon-144x144.png',
+                tag: reminder.id,
+                showTrigger: new TimestampTrigger(reminderTime.getTime()),
+                requireInteraction: true
+            });
 
         } catch (error) {
             console.error('Error scheduling reminder:', error);
-            // Fallback to basic notification
+            // Fallback to basic timeout
             setTimeout(() => sendPushNotification(todoText), delay);
         }
     }

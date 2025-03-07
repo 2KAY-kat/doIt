@@ -7,9 +7,9 @@ const firebase = self.firebase;
 // Initialize Firebase in the Service Worker
 firebase.initializeApp({
     apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
-    authDomain: "doit-2b4af.firebaseapp.com",
+    authDomain: "doit-2b4af.firebaseapp.com", // Use Firebase domain, not GitHub
     projectId: "doit-2b4af",
-    storageBucket: "doit-2b4af",
+    storageBucket: "doit-2b4af.appspot.com",
     messagingSenderId: "672989037293",
     appId: "1:672989037293:web:3af2552677820a945382e4",
     measurementId: "G-BQ2BQ96JTF"
@@ -22,12 +22,12 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(function(payload) {
     console.log('[firebase-messaging-sw.js] Received background message:', payload);
 
-    const notificationTitle = payload.notification?.title || "doIt Reminder";
+    const notificationTitle = "doIt Reminder";
     const notificationOptions = {
-        body: payload.notification?.body || payload.data?.message,
-        icon: 'icon-144x144.png',
-        tag: payload.data?.id,
-        data: payload.data
+        body: payload.data.text || "Time for your task!",
+        icon: '/doIt/icon-144x144.png',
+        tag: payload.data.id,
+        requireInteraction: true // Keep notification until user interacts
     };
 
     // Show Notification
@@ -62,8 +62,9 @@ self.addEventListener('periodicsync', async (event) => {
             if (reminder.time <= now && !reminder.notified) {
                 self.registration.showNotification("doIt Reminder", {
                     body: `It's time to: ${reminder.text}`,
-                    icon: 'icon-144x144.png',
-                    tag: reminder.id
+                    icon: '/doIt/icon-144x144.png',
+                    tag: reminder.id,
+                    requireInteraction: true
                 });
                 reminder.notified = true;
             }
