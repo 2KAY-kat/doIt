@@ -4,14 +4,19 @@ import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/fireb
 
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/doIt/firebase-messaging-sw.js', {
-        scope: '/doIt/'
-    })
-    .then(registration => {
-        console.log('Service Worker registered successfully:', registration);
-    })
-    .catch(error => {
-        console.log('Service Worker registration failed:', error);
+    const swRegistration = await navigator.serviceWorker.register(
+        '/doIt/firebase-messaging-sw.js',
+        {
+            scope: '/doIt/',
+            updateViaCache: 'none'
+        }
+    );
+
+    // Initialize messaging with the service worker registration
+    const messaging = getMessaging(app);
+    await messaging.getToken({
+        vapidKey: "BN9kPeitTHd1810RpAhmzC_Vqxd61gjxUIIb_3-p6WO9IB_vMP38oZSM-lfczmnzXT0424tIzBiEvPc5HaNvq9o",
+        serviceWorkerRegistration: swRegistration
     });
 }
 
@@ -130,21 +135,38 @@ async function scheduleReminder(todoText, reminderTime) {
             reminders.push(reminder);
             localStorage.setItem('reminders', JSON.stringify(reminders));
 
-            // Register service worker if not already registered
+            // Get the service worker registration
             const registration = await navigator.serviceWorker.ready;
 
-            // Schedule notification using service worker
-            await registration.showNotification("doIt Reminder", {
-                body: `It's time to: ${todoText}`,
-                icon: '/doIt/icon-144x144.png',
-                tag: reminder.id,
-                showTrigger: new TimestampTrigger(reminderTime.getTime()),
-                requireInteraction: true
-            });
+            // Set up timer for notification
+            setTimeout(async () => {
+                if (!reminder.notified) {
+                    // Show notification using service worker
+                    await registration.showNotification("doIt Reminder", {
+                        body: `It's time to: ${todoText}`,
+                        icon: '/doIt/icon-144x144.png',
+                        tag: reminder.id,
+                        requireInteraction: true,
+                        actions: [
+                            { action: 'complete', title: 'Mark Complete' },
+                            { action: 'snooze', title: 'Snooze' }
+                        ]
+                    });
+
+                    // Update reminder status
+                    reminder.notified = true;
+                    reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+                    const index = reminders.findIndex(r => r.id === reminder.id);
+                    if (index !== -1) {
+                        reminders[index].notified = true;
+                        localStorage.setItem('reminders', JSON.stringify(reminders));
+                    }
+                }
+            }, delay);
 
         } catch (error) {
             console.error('Error scheduling reminder:', error);
-            // Fallback to basic timeout
+            // Fallback to basic notification
             setTimeout(() => sendPushNotification(todoText), delay);
         }
     }

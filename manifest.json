@@ -13,12 +13,12 @@
     ],
     "icons": [
         {
-            "src": "icon-144x144.png",
+            "src": "/doIt/icon-144x144.png",
             "sizes": "144x144",
             "type": "image/png"
         },
         {
-            "src": "icon-144x144.png",
+            "src": "/doIt/icon-144x144.png",
             "sizes": "144x144",
             "type": "image/png"
         }

@@ -53,6 +53,28 @@ self.addEventListener("notificationclick", (event) => {
     );
 });
 
+self.addEventListener('notificationclick', function(event) {
+    event.notification.close();
+
+    if (event.action === 'complete') {
+        // Handle complete action
+        console.log('Marked as complete:', event.notification.tag);
+    } else if (event.action === 'snooze') {
+        // Handle snooze action
+        console.log('Snoozed:', event.notification.tag);
+        // Reschedule notification for 5 minutes later
+        event.waitUntil(
+            self.registration.showNotification(event.notification.title, {
+                body: event.notification.body,
+                tag: event.notification.tag,
+                icon: event.notification.icon,
+                requireInteraction: true,
+                showTrigger: new TimestampTrigger(Date.now() + 5 * 60 * 1000)
+            })
+        );
+    }
+});
+
 // Handle periodic sync for checking reminders
 self.addEventListener('periodicsync', async (event) => {
     if (event.tag === 'check-reminders') {
