@@ -2,28 +2,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging.js";
 
-// Service Worker Registration
-if ('serviceWorker' in navigator) {
-    const swRegistration = await navigator.serviceWorker.register(
-        '/doIt/firebase-messaging-sw.js',
-        {
-            scope: '/doIt/',
-            updateViaCache: 'none'
-        }
-    );
-
-    // Initialize messaging with the service worker registration
-    const messaging = getMessaging(app);
-    await messaging.getToken({
-        vapidKey: "BN9kPeitTHd1810RpAhmzC_Vqxd61gjxUIIb_3-p6WO9IB_vMP38oZSM-lfczmnzXT0424tIzBiEvPc5HaNvq9o",
-        serviceWorkerRegistration: swRegistration
-    });
-}
-
 // Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
-    authDomain: "doit-2b4af.firebaseapp.com", // Update this
+    authDomain: "doit-2b4af.firebaseapp.com",
     projectId: "doit-2b4af",
     storageBucket: "doit-2b4af.appspot.com",
     messagingSenderId: "672989037293",
@@ -33,9 +15,34 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Firebase Messaging Instance
 const messaging = getMessaging(app);
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+    try {
+        const swRegistration = await navigator.serviceWorker.register(
+            '/doIt/firebase-messaging-sw.js',
+            {
+                scope: '/doIt/',
+                updateViaCache: 'none'
+            }
+        );
+        console.log('Service Worker registered successfully:', swRegistration);
+
+        // Get FCM token with service worker
+        const currentToken = await getToken(messaging, {
+            vapidKey: "BN9kPeitTHd1810RpAhmzC_Vqxd61gjxUIIb_3-p6WO9IB_vMP38oZSM-lfczmnzXT0424tIzBiEvPc5HaNvq9o",
+            serviceWorkerRegistration: swRegistration
+        });
+
+        if (currentToken) {
+            console.log('FCM Token:', currentToken);
+            localStorage.setItem('fcm_token', currentToken);
+        }
+    } catch (error) {
+        console.error('Service Worker registration failed:', error);
+    }
+}
 
 // Request Notification Permission
 Notification.requestPermission().then(permission => {
