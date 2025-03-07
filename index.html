@@ -15,13 +15,37 @@
 <body>
     <div class="app">
         <h1>do It</h1>
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+        <h1>do It</h1>
         <form action="" id="todo-form">
             <input type="text" id="todo-input" placeholder="Add New To Do..." required>
             <input type="datetime-local" id="reminder-input" required>
             <button type="submit">Add ToDo</button>
+            <select id="priority-input" required>
+                <option value="low">Low Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="high">High Priority</option>
+            </select>
+            <button type="submit">Add ToDo</button>
         </form>
 
         <ul id="todo-list"></ul>
+        <div class="stats">
+            <div class="stat-item">
+                <span id="total-tasks">0</span>
+                <label>Total Tasks</label>
+            </div>
+            <div class="stat-item">
+                <span id="completed-tasks">0</span>
+                <label>Completed</label>
+            </div>
+            <div class="stat-item">
+                <span id="pending-tasks">0</span>
+                <label>Pending</label>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="/doIt/app.js"></script>
