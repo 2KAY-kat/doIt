@@ -1,6 +1,6 @@
 // Import Firebase scripts for service worker
-importScripts('https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/11.4.0/firebase-messaging.js');
+importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
 
 // Ensure firebase is available globally
 const firebase = self.firebase;

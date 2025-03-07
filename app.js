@@ -1,6 +1,6 @@
 // Import Firebase modules (ES Module syntax)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-messaging.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging.js";
 
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
@@ -18,7 +18,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
     authDomain: "doit-2b4af.firebaseapp.com",
     projectId: "doit-2b4af",
-    storageBucket: "doit-2b4af.appspot.com",
+    storageBucket: "doit-2b4af",
     messagingSenderId: "672989037293",
     appId: "1:672989037293:web:3af2552677820a945382e4",
     measurementId: "G-BQ2BQ96JTF"
