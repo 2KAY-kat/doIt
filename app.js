@@ -110,14 +110,45 @@ window.removeTodo = function(index) {
 }
 
 // Schedule Reminder
-function scheduleReminder(todoText, reminderTime) {
+async function scheduleReminder(todoText, reminderTime) {
     const now = new Date();
     const delay = reminderTime - now;
 
     if (delay > 0) {
-        setTimeout(() => {
-            sendPushNotification(todoText);
-        }, delay);
+        // Store reminder in both localStorage and IndexedDB for service worker
+        const reminder = {
+            id: Date.now().toString(),
+            text: todoText,
+            time: reminderTime.getTime(),
+            notified: false
+        };
+
+        // Store in localStorage
+        let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+        reminders.push(reminder);
+        localStorage.setItem('reminders', JSON.stringify(reminders));
+
+        try {
+            // Register periodic sync for background checks
+            const registration = await navigator.serviceWorker.ready;
+            if ('periodicSync' in registration) {
+                await registration.periodicSync.register('check-reminders', {
+                    minInterval: 60000 // Check every minute
+                });
+            }
+
+            // Schedule immediate timeout for foreground notifications
+            setTimeout(() => {
+                if (document.visibilityState === 'visible') {
+                    sendPushNotification(todoText);
+                }
+            }, delay);
+
+        } catch (error) {
+            console.error('Error scheduling reminder:', error);
+            // Fallback to basic notification
+            setTimeout(() => sendPushNotification(todoText), delay);
+        }
     }
 }
 
@@ -132,3 +163,20 @@ function sendPushNotification(todoText) {
 }
 
 renderTodos();
+
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        // Check for missed notifications
+        const reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+        const now = new Date().getTime();
+
+        reminders.forEach(reminder => {
+            if (reminder.time <= now && !reminder.notified) {
+                sendPushNotification(reminder.text);
+                reminder.notified = true;
+            }
+        });
+
+        localStorage.setItem('reminders', JSON.stringify(reminders));
+    }
+});
