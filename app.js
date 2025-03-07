@@ -4,19 +4,21 @@ import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/fireb
 
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('firebase-messaging-sw.js')
-        .then(registration => {
-            console.log('Service Worker registered successfully:', registration);
-        })
-        .catch(error => {
-            console.log('Service Worker registration failed:', error);
-        });
+    navigator.serviceWorker.register('/doIt/firebase-messaging-sw.js', {
+        scope: '/doIt/'
+    })
+    .then(registration => {
+        console.log('Service Worker registered successfully:', registration);
+    })
+    .catch(error => {
+        console.log('Service Worker registration failed:', error);
+    });
 }
 
 // Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
-    authDomain: "doit-2b4af.firebaseapp.com", // Update this line
+    authDomain: "2kay-kat.github.io",
     projectId: "doit-2b4af",
     storageBucket: "doit-2b4af.appspot.com",
     messagingSenderId: "672989037293",

@@ -2,11 +2,12 @@
     "name": "do It App",
     "short_name": "doIt",
     "description": "A dambwe tech powered to do app",
-    "start_url": "/",
+    "start_url": "/doIt/",
     "display": "standalone",
     "background_color": "#063d3f",
     "theme_color": "#09182b",
     "gcm_sender_id": "672989037293",
+    "scope": "/doIt/",
     "permissions": [
         "notifications"
     ],
