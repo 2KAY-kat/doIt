@@ -23,7 +23,7 @@ class DoItWidget extends HTMLElement {
                     background: white;
                     border-radius: 12px;
                     padding: 0.875rem;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    box-shadow: 0 2px 8px rgba(12, 11, 11, 0.1);
                     max-width: 100%;
                     margin: 0.5rem;
                     font-size: 14px;
