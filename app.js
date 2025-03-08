@@ -1,6 +1,62 @@
 // Import Firebase modules (ES Module syntax)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging.js";
+import { auth, db, googleProvider, signInWithPopup } from './firebase.js';
+import { collection, doc, setDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+let currentUser = null;
+let unsubscribe = null;
+
+// Authentication handlers
+document.getElementById('google-signin').addEventListener('click', async () => {
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        currentUser = result.user;
+        document.getElementById('auth-container').style.display = 'none';
+    } catch (error) {
+        console.error('Auth error:', error);
+    }
+});
+
+document.getElementById('sign-out').addEventListener('click', () => {
+    auth.signOut();
+});
+
+// Auth state observer
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        currentUser = user;
+        document.getElementById('auth-container').style.display = 'none';
+        document.getElementById('user-avatar').src = user.photoURL;
+        document.getElementById('user-name').textContent = user.displayName;
+        
+        // Subscribe to user's todos
+        subscribeToTodos(user.uid);
+    } else {
+        currentUser = null;
+        document.getElementById('auth-container').style.display = 'flex';
+        if (unsubscribe) unsubscribe();
+        localStorage.clear();
+        renderTodos();
+    }
+});
+
+// Firestore sync functions
+function subscribeToTodos(userId) {
+    const todosRef = collection(db, 'todos');
+    const userTodosQuery = query(todosRef, where('userId', '==', userId));
+    
+    unsubscribe = onSnapshot(userTodosQuery, (snapshot) => {
+        const todos = [];
+        snapshot.forEach(doc => {
+            todos.push({ id: doc.id, ...doc.data() });
+        });
+        localStorage.setItem('todos', JSON.stringify(todos));
+        renderTodos();
+        updateStats();
+    });
+}
+
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -103,6 +159,22 @@ document.getElementById('todo-form').addEventListener('submit', async (e) => {
             reminderTime: reminderTime.getTime()
         };
         todos.push(todo);
+    }
+
+
+    if (currentUser) {
+        // Add todo to Firestore
+        const todoRef = doc(collection(db, 'todos'));
+        await setDoc(todoRef, {
+            ...todo,
+            userId: currentUser.uid,
+            repeatConfig: {
+                enabled: document.getElementById('repeat-enabled').checked,
+                frequency: document.getElementById('repeat-frequency').value,
+                interval: parseInt(document.getElementById('repeat-interval').value),
+                endDate: document.getElementById('repeat-end-date').value
+            }
+        });
     }
 
     // Save to localStorage
