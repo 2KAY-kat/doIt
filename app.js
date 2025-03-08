@@ -67,40 +67,37 @@ Notification.requestPermission().then(permission => {
     }
 });
 
-// To-Do Form Submission
-document.getElementById('todo-form').addEventListener('submit', function (e) {
+// Form submission handler
+document.getElementById('todo-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-
-    const todoInput = document.getElementById('todo-input');
-    const reminderInput = document.getElementById('reminder-input');
-
-    const todoText = todoInput.value;
-    const reminderTime = new Date(reminderInput.value);
-
-    if (todoText && reminderTime) {
-        addTodoToStorage(todoText, reminderTime);
-        scheduleReminder(todoText, reminderTime);
-        todoInput.value = '';
-        reminderInput.value = '';
-    }
-});
-
-// Add To-Do to Local Storage
-function addTodoToStorage(text, reminderTime) {
-    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+    const todoText = document.getElementById('todo-input').value;
+    const reminderTime = new Date(document.getElementById('reminder-input').value);
+    const priority = document.getElementById('priority-input').value;
 
     const todo = {
-        text,
-        reminderTime,
-        isCompleted: false
+        id: Date.now().toString(),
+        text: todoText,
+        priority: priority,
+        completed: false,
+        createdAt: Date.now(),
+        reminderTime: reminderTime.getTime()
     };
+
+    // Save to localStorage
+    let todos = JSON.parse(localStorage.getItem('todos')) || [];
     todos.push(todo);
     localStorage.setItem('todos', JSON.stringify(todos));
 
-    renderTodos();
-}
+    // Schedule reminder
+    await scheduleReminder(todoText, reminderTime);
 
-// Render To-Dos
+    // Reset form and update UI
+    e.target.reset();
+    renderTodos();
+    updateStats();
+});
+
+// Render todos with priority styling
 function renderTodos() {
     const todoList = document.getElementById('todo-list');
     todoList.innerHTML = '';
@@ -108,12 +105,52 @@ function renderTodos() {
 
     todos.forEach((todo, index) => {
         const li = document.createElement('li');
+        li.className = `todo-item priority-${todo.priority}`;
         li.innerHTML = `
-            ${todo.text} <button onClick="removeTodo(${index})">Delete</button>
+            <input type="checkbox" ${todo.completed ? 'checked' : ''} 
+                   onchange="toggleTodo(${index})">
+            <span class="${todo.completed ? 'completed' : ''}">${todo.text}</span>
+            <div class="todo-actions">
+                <button onclick="removeTodo(${index})">Delete</button>
+                <button onclick="editTodo(${index})">Edit</button>
+            </div>
         `;
         todoList.appendChild(li);
     });
+
+    updateProgress();
 }
+
+// Update statistics
+function updateStats() {
+    const todos = JSON.parse(localStorage.getItem('todos')) || [];
+    const total = todos.length;
+    const completed = todos.filter(todo => todo.completed).length;
+    const pending = total - completed;
+
+    document.getElementById('total-tasks').textContent = total;
+    document.getElementById('completed-tasks').textContent = completed;
+    document.getElementById('pending-tasks').textContent = pending;
+}
+
+// Update progress bar
+function updateProgress() {
+    const todos = JSON.parse(localStorage.getItem('todos')) || [];
+    const total = todos.length;
+    const completed = todos.filter(todo => todo.completed).length;
+    const progress = total === 0 ? 0 : (completed / total) * 100;
+
+    document.getElementById('progress').style.width = `${progress}%`;
+}
+
+// Toggle todo completion
+window.toggleTodo = function(index) {
+    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+    todos[index].completed = !todos[index].completed;
+    localStorage.setItem('todos', JSON.stringify(todos));
+    renderTodos();
+    updateStats();
+};
 
 // Remove To-Do
 window.removeTodo = function(index) {

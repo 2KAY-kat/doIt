@@ -89,12 +89,64 @@ li button {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px;
-    margin: 5px 0;
-    background: #f9f9f9;
-    border-radius: 5px;
+    padding: 15px;
+    margin: 8px 0;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
 }
 
-.priority-high { border-left: 4px solid #ff4444; }
-.priority-medium { border-left: 4px solid #ffbb33; }
-.priority-low { border-left: 4px solid #00C851; }
+.todo-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.priority-high {
+    border-left: 4px solid #dc3545;
+}
+
+.priority-medium {
+    border-left: 4px solid #ffc107;
+}
+
+.priority-low {
+    border-left: 4px solid #28a745;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+.todo-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-item span {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.stat-item label {
+    color: #6c757d;
+    font-size: 14px;
+}
