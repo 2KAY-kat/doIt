@@ -137,7 +137,7 @@ document.getElementById('todo-form').addEventListener('submit', async (e) => {
         // Update existing todo
         const index = parseInt(editingIndex);
         todos[index] = {
-            ...todos[index],
+            ...todo,
             text: todoText,
             priority: priority,
             reminderTime: reminderTime.getTime(),
