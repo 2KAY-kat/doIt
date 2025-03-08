@@ -29,6 +29,10 @@
         </div>
     </div>
 
+    <div id="auth-loading" class="auth-loading hidden">
+        <div class="loading-spinner"></div>
+    </div>
+
     <div class="app">
         <header class="app-header">
             <h1>do<span class="accent">It</span></h1>
@@ -55,21 +59,20 @@
 
         <form id="todo-form" class="form">
 
-            <!-- Add this to the form-grid div -->
-<div class="form-group">
-    <label>
-        <input type="checkbox" id="repeat-enabled"> Repeat Reminder
-    </label>
-    <div id="repeat-options" class="repeat-options">
-        <select id="repeat-frequency">
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-        </select>
-        <input type="number" id="repeat-interval" min="1" value="1">
-        <input type="date" id="repeat-end-date">
-    </div>
-</div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="repeat-enabled"> Repeat Reminder
+                </label>
+                <div id="repeat-options" class="repeat-options">
+                    <select id="repeat-frequency">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                    <input type="number" id="repeat-interval" min="1" value="1">
+                    <input type="date" id="repeat-end-date">
+                </div>
+            </div>
 
             <div class="form-grid">
                 <div class="form-group">

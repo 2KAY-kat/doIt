@@ -10,11 +10,22 @@ let unsubscribe = null;
 // Authentication handlers
 document.getElementById('google-signin').addEventListener('click', async () => {
     try {
+        document.getElementById('google-signin').disabled = true;
         const result = await signInWithPopup(auth, googleProvider);
         currentUser = result.user;
-        document.getElementById('auth-container').style.display = 'none';
     } catch (error) {
-        console.error('Auth error:', error);
+        console.error('Google sign-in error:', error);
+        let errorMessage = 'Failed to sign in with Google';
+        
+        if (error.code === 'auth/configuration-not-found') {
+            errorMessage = 'Authentication service is not properly configured';
+        } else if (error.code === 'auth/popup-blocked') {
+            errorMessage = 'Please allow popups for this site to sign in';
+        }
+        
+        showNotification(errorMessage, 'error');
+    } finally {
+        document.getElementById('google-signin').disabled = false;
     }
 });
 
@@ -422,21 +433,29 @@ document.addEventListener('visibilitychange', () => {
 
 const initAuth = async () => {
     try {
-        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+        // Show loading state
+        document.getElementById('auth-loading')?.classList.remove('hidden');
         
-        // Handle auth state changes
         auth.onAuthStateChanged(async user => {
-            if (user) {
-                await initializeUserData(user);
-                document.getElementById('auth-container').style.display = 'none';
-            } else {
-                document.getElementById('auth-container').style.display = 'flex';
+            try {
+                if (user) {
+                    await initializeUserData(user);
+                    document.getElementById('auth-container').style.display = 'none';
+                    showNotification('Successfully signed in!', 'success');
+                } else {
+                    document.getElementById('auth-container').style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('Auth state change error:', error);
+                showNotification('Error updating authentication state', 'error');
+            } finally {
+                document.getElementById('auth-loading')?.classList.add('hidden');
             }
         });
     } catch (error) {
         console.error('Auth initialization error:', error);
-        // Show user-friendly error message
-        showNotification('Authentication error. Please try again later.', 'error');
+        showNotification('Authentication system failed to initialize', 'error');
+        document.getElementById('auth-loading')?.classList.add('hidden');
     }
 };
 
