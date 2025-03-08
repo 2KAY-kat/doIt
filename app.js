@@ -419,3 +419,59 @@ document.addEventListener('visibilitychange', () => {
         localStorage.setItem('reminders', JSON.stringify(reminders));
     }
 });
+
+const initAuth = async () => {
+    try {
+        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+        
+        // Handle auth state changes
+        auth.onAuthStateChanged(async user => {
+            if (user) {
+                await initializeUserData(user);
+                document.getElementById('auth-container').style.display = 'none';
+            } else {
+                document.getElementById('auth-container').style.display = 'flex';
+            }
+        });
+    } catch (error) {
+        console.error('Auth initialization error:', error);
+        // Show user-friendly error message
+        showNotification('Authentication error. Please try again later.', 'error');
+    }
+};
+
+const showNotification = (message, type = 'info') => {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+};
+
+// Check online status
+window.addEventListener('online', () => {
+    showNotification('Back online!', 'info');
+    syncOfflineTodos();
+});
+
+window.addEventListener('offline', () => {
+    showNotification('You are offline. Changes will be saved locally.', 'error');
+});
+
+// Sync offline todos when back online
+const syncOfflineTodos = async () => {
+    const offlineTodos = JSON.parse(localStorage.getItem('offlineTodos') || '[]');
+    if (offlineTodos.length && auth.currentUser) {
+        try {
+            for (const todo of offlineTodos) {
+                await addTodoToFirestore(todo);
+            }
+            localStorage.removeItem('offlineTodos');
+        } catch (error) {
+            console.error('Error syncing offline todos:', error);
+        }
+    }
+};

@@ -124,20 +124,28 @@ self.addEventListener('fetch', event => {
                 if (response) {
                     return response;
                 }
-                return fetch(event.request)
-                    .then(response => {
-                        if (!response || response.status !== 200) {
-                            return response;
-                        }
-                        const responseToCache = response.clone();
-                        caches.open(CACHE_NAME)
-                            .then(cache => {
-                                cache.put(event.request, responseToCache);
-                            });
-                        return response;
-                    });
+                return fetch(event.request).catch(() => {
+                    // Return offline fallback
+                    return new Response('Offline');
+                });
             })
     );
+});
+
+// Add error handling for messaging
+self.addEventListener('push', event => {
+    try {
+        const payload = event.data?.json() ?? {};
+        event.waitUntil(
+            self.registration.showNotification(payload.notification?.title ?? 'New Notification', {
+                body: payload.notification?.body,
+                icon: '/icon-192x192.png',
+                badge: '/icon-72x72.png'
+            })
+        );
+    } catch (error) {
+        console.error('Push notification error:', error);
+    }
 });
 
 // Helper functions
