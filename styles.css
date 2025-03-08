@@ -1,14 +1,16 @@
 :root {
     --primary-color: #4A90E2;
+    --primary-light: #EBF3FC;
     --success-color: #2ECC71;
     --warning-color: #F1C40F;
     --danger-color: #E74C3C;
-    --gray-100: #f8f9fa;
-    --gray-200: #e9ecef;
-    --gray-800: #343a40;
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
-    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-    --anim-duration: 0.3s;
+    --gray-50: #fafafa;
+    --gray-100: #f4f4f5;
+    --gray-200: #e4e4e7;
+    --gray-800: #27272a;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+    --anim-duration: 0.2s;
 }
 
 * {
@@ -18,9 +20,9 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     line-height: 1.6;
-    background: var(--gray-100);
+    background: var(--gray-50);
     color: var(--gray-800);
     margin: 0;
     padding: 20px;
@@ -39,11 +41,24 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+.app-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
 h1 {
     font-size: 2.5rem;
+    color: var(--gray-800);
+    margin: 0;
+}
+
+.accent {
     color: var(--primary-color);
-    margin-bottom: 2rem;
-    text-align: center;
+}
+
+.app-subtitle {
+    color: var(--gray-600);
+    margin-top: 0.5rem;
 }
 
 /* Form Styles */
@@ -57,14 +72,27 @@ h1 {
     border-radius: 12px;
 }
 
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
+label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-800);
+}
+
 input, select {
-    padding: 12px;
+    padding: 0.75rem;
     border: 2px solid var(--gray-200);
     border-radius: 8px;
     font-size: 1rem;
@@ -74,7 +102,7 @@ input, select {
 input:focus, select:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 button {
@@ -91,6 +119,26 @@ button {
 button:hover {
     transform: translateY(-1px);
     box-shadow: var(--shadow-sm);
+}
+
+.btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--anim-duration) ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
 }
 
 /* Todo List Styles */

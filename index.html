@@ -4,53 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/doIt/icon-144x144.png" type="image/x-icon">
-    <title>doIt</title>
+    <title>doIt - Smart Task Manager</title>
     <link rel="stylesheet" href="/doIt/styles.css">
     <link rel="manifest" href="/doIt/manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <audio id="notification-sound" preload="none">
         <source src="/doIt/notification.wav" type="audio/wav">
     </audio>
 </head>
 <body>
     <div class="app">
-        <h1>do<span class="accent">It</span></h1>
+        <header class="app-header">
+            <h1>do<span class="accent">It</span></h1>
+            <p class="app-subtitle">Smart Task Management</p>
+        </header>
         
         <div class="progress-container">
+            <div class="progress-label">
+                <span>Progress</span>
+                <span id="progress-percentage">0%</span>
+            </div>
             <div class="progress-bar">
                 <div id="progress" class="progress"></div>
             </div>
         </div>
 
         <form id="todo-form" class="form">
-            <div class="form-group">
-                <input type="text" id="todo-input" placeholder="What needs to be done?" required>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="todo-input">Task Description</label>
+                    <input type="text" id="todo-input" placeholder="What needs to be done?" required>
+                </div>
+                <div class="form-group">
+                    <label for="reminder-input">Reminder Time</label>
+                    <input type="datetime-local" id="reminder-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="priority-input">Priority Level</label>
+                    <select id="priority-input" required>
+                        <option value="low">Low Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="datetime-local" id="reminder-input" required>
-            </div>
-            <div class="form-group">
-                <select id="priority-input" required>
-                    <option value="low">Low Priority</option>
-                    <option value="medium">Medium Priority</option>
-                    <option value="high">High Priority</option>
-                </select>
-            </div>
-            <button type="submit" class="btn-primary">Add Todo</button>
+            <button type="submit" class="btn-primary">
+                <i class="ri-add-line"></i>
+                <span>Add Todo</span>
+            </button>
         </form>
+
+        <div class="list-header">
+            <h2>My Tasks</h2>
+            <div class="list-actions">
+                <button class="btn-icon" title="Sort by priority">
+                    <i class="ri-sort-asc"></i>
+                </button>
+                <button class="btn-icon" title="Filter tasks">
+                    <i class="ri-filter-3-line"></i>
+                </button>
+            </div>
+        </div>
 
         <ul id="todo-list" class="todo-list"></ul>
 
         <div class="stats">
             <div class="stat-item">
+                <i class="ri-list-check-2"></i>
                 <div class="stat-number" id="total-tasks">0</div>
                 <div class="stat-label">Total Tasks</div>
             </div>
             <div class="stat-item">
+                <i class="ri-check-double-line"></i>
                 <div class="stat-number" id="completed-tasks">0</div>
                 <div class="stat-label">Completed</div>
             </div>
             <div class="stat-item">
+                <i class="ri-time-line"></i>
                 <div class="stat-number" id="pending-tasks">0</div>
                 <div class="stat-label">Pending</div>
             </div>
