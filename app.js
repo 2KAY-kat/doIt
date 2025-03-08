@@ -7,7 +7,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyBPtoM1O5VpaAmjdNo8QTX5BLTgwtdXTY0",
     authDomain: "doit-2b4af.firebaseapp.com",
     projectId: "doit-2b4af",
-    storageBucket: "doit-2b4af.appspot.com",
+    storageBucket: "doit-2b4af",
     messagingSenderId: "672989037293",
     appId: "1:672989037293:web:3af2552677820a945382e4",
     measurementId: "G-BQ2BQ96JTF"
@@ -74,18 +74,38 @@ document.getElementById('todo-form').addEventListener('submit', async (e) => {
     const reminderTime = new Date(document.getElementById('reminder-input').value);
     const priority = document.getElementById('priority-input').value;
 
-    const todo = {
-        id: Date.now().toString(),
-        text: todoText,
-        priority: priority,
-        completed: false,
-        createdAt: Date.now(),
-        reminderTime: reminderTime.getTime()
-    };
+    const editingIndex = localStorage.getItem('editingTodoIndex');
+    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+    if (editingIndex !== null) {
+        // Update existing todo
+        const index = parseInt(editingIndex);
+        todos[index] = {
+            ...todos[index],
+            text: todoText,
+            priority: priority,
+            reminderTime: reminderTime.getTime(),
+            updatedAt: Date.now()
+        };
+        localStorage.removeItem('editingTodoIndex');
+        
+        // Reset submit button text
+        const submitButton = document.querySelector('#todo-form button[type="submit"]');
+        submitButton.textContent = 'Add Todo';
+    } else {
+        // Add new todo
+        const todo = {
+            id: Date.now().toString(),
+            text: todoText,
+            priority: priority,
+            completed: false,
+            createdAt: Date.now(),
+            reminderTime: reminderTime.getTime()
+        };
+        todos.push(todo);
+    }
 
     // Save to localStorage
-    let todos = JSON.parse(localStorage.getItem('todos')) || [];
-    todos.push(todo);
     localStorage.setItem('todos', JSON.stringify(todos));
 
     // Schedule reminder
@@ -165,6 +185,9 @@ window.editTodo = function(index) {
     const todos = JSON.parse(localStorage.getItem('todos')) || [];
     const todo = todos[index];
     
+    // Store the index being edited
+    localStorage.setItem('editingTodoIndex', index);
+    
     // Populate form with todo data
     document.getElementById('todo-input').value = todo.text;
     
@@ -174,14 +197,10 @@ window.editTodo = function(index) {
     document.getElementById('reminder-input').value = formattedDate;
     
     document.getElementById('priority-input').value = todo.priority;
-
-    // Remove the old todo
-    todos.splice(index, 1);
-    localStorage.setItem('todos', JSON.stringify(todos));
     
-    // Update UI
-    renderTodos();
-    updateStats();
+    // Change submit button text to indicate editing
+    const submitButton = document.querySelector('#todo-form button[type="submit"]');
+    submitButton.textContent = 'Update Todo';
 };
 
 // Schedule Reminder
