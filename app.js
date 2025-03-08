@@ -160,6 +160,30 @@ window.removeTodo = function(index) {
     renderTodos(); // Call renderTodos instead of removeTodo
 }
 
+// Edit todo function
+window.editTodo = function(index) {
+    const todos = JSON.parse(localStorage.getItem('todos')) || [];
+    const todo = todos[index];
+    
+    // Populate form with todo data
+    document.getElementById('todo-input').value = todo.text;
+    
+    // Convert timestamp to datetime-local format
+    const reminderDate = new Date(todo.reminderTime);
+    const formattedDate = reminderDate.toISOString().slice(0, 16);
+    document.getElementById('reminder-input').value = formattedDate;
+    
+    document.getElementById('priority-input').value = todo.priority;
+
+    // Remove the old todo
+    todos.splice(index, 1);
+    localStorage.setItem('todos', JSON.stringify(todos));
+    
+    // Update UI
+    renderTodos();
+    updateStats();
+};
+
 // Schedule Reminder
 async function scheduleReminder(todoText, reminderTime) {
     const now = new Date();
