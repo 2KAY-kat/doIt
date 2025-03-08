@@ -7,46 +7,55 @@
     <title>doIt</title>
     <link rel="stylesheet" href="/doIt/styles.css">
     <link rel="manifest" href="/doIt/manifest.json">
-    <!-- Remove preload and add audio element instead -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <audio id="notification-sound" preload="none">
         <source src="/doIt/notification.wav" type="audio/wav">
     </audio>
 </head>
 <body>
     <div class="app">
-        <h1>do It</h1>
-        <div class="progress-bar">
-            <div id="progress" class="progress"></div>
+        <h1>do<span class="accent">It</span></h1>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div id="progress" class="progress"></div>
+            </div>
         </div>
-        <form action="" id="todo-form">
-            <input type="text" id="todo-input" placeholder="Add New To Do..." required>
-            <input type="datetime-local" id="reminder-input" required>
-            <button type="submit">Add ToDo</button>
-            <select id="priority-input" required>
-                <option value="low">Low Priority</option>
-                <option value="medium">Medium Priority</option>
-                <option value="high">High Priority</option>
-            </select>
-            <button type="submit">Add ToDo</button>
+
+        <form id="todo-form" class="form">
+            <div class="form-group">
+                <input type="text" id="todo-input" placeholder="What needs to be done?" required>
+            </div>
+            <div class="form-group">
+                <input type="datetime-local" id="reminder-input" required>
+            </div>
+            <div class="form-group">
+                <select id="priority-input" required>
+                    <option value="low">Low Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">Add Todo</button>
         </form>
 
-        <ul id="todo-list"></ul>
+        <ul id="todo-list" class="todo-list"></ul>
+
         <div class="stats">
             <div class="stat-item">
-                <span id="total-tasks">0</span>
-                <label>Total Tasks</label>
+                <div class="stat-number" id="total-tasks">0</div>
+                <div class="stat-label">Total Tasks</div>
             </div>
             <div class="stat-item">
-                <span id="completed-tasks">0</span>
-                <label>Completed</label>
+                <div class="stat-number" id="completed-tasks">0</div>
+                <div class="stat-label">Completed</div>
             </div>
             <div class="stat-item">
-                <span id="pending-tasks">0</span>
-                <label>Pending</label>
+                <div class="stat-number" id="pending-tasks">0</div>
+                <div class="stat-label">Pending</div>
             </div>
         </div>
     </div>
-
-    <script type="module" src="/doIt/app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
