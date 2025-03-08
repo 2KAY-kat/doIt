@@ -117,22 +117,82 @@ document.getElementById('todo-form').addEventListener('submit', async (e) => {
     updateStats();
 });
 
+// Add sorting functionality
+document.getElementById('sort-select').addEventListener('change', function(e) {
+    const sortBy = e.target.value;
+    const todos = JSON.parse(localStorage.getItem('todos')) || [];
+    
+    switch(sortBy) {
+        case 'priority-high':
+            todos.sort((a, b) => getPriorityWeight(b.priority) - getPriorityWeight(a.priority));
+            break;
+        case 'priority-low':
+            todos.sort((a, b) => getPriorityWeight(a.priority) - getPriorityWeight(b.priority));
+            break;
+        case 'date-new':
+            todos.sort((a, b) => b.createdAt - a.createdAt);
+            break;
+        case 'date-old':
+            todos.sort((a, b) => a.createdAt - b.createdAt);
+            break;
+        case 'completed':
+            todos.sort((a, b) => {
+                if (a.completed === b.completed) return 0;
+                return a.completed ? 1 : -1;
+            });
+            break;
+        default:
+            // Return to original order (by creation date)
+            todos.sort((a, b) => a.createdAt - b.createdAt);
+    }
+    
+    localStorage.setItem('todos', JSON.stringify(todos));
+    renderTodos();
+});
+
+// Helper function for priority weights
+function getPriorityWeight(priority) {
+    switch(priority) {
+        case 'high': return 3;
+        case 'medium': return 2;
+        case 'low': return 1;
+        default: return 0;
+    }
+}
+
 // Render todos with priority styling
 function renderTodos() {
     const todoList = document.getElementById('todo-list');
     todoList.innerHTML = '';
     const todos = JSON.parse(localStorage.getItem('todos')) || [];
-
+    
     todos.forEach((todo, index) => {
         const li = document.createElement('li');
-        li.className = `todo-item priority-${todo.priority}`;
+        li.className = `todo-item priority-${todo.priority} ${todo.completed ? 'completed' : ''}`;
+        
+        const date = new Date(todo.createdAt);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
         li.innerHTML = `
-            <input type="checkbox" ${todo.completed ? 'checked' : ''} 
+            <input type="checkbox" class="todo-checkbox" 
+                   ${todo.completed ? 'checked' : ''} 
                    onchange="toggleTodo(${index})">
-            <span class="${todo.completed ? 'completed' : ''}">${todo.text}</span>
+            <div class="todo-content">
+                <span class="todo-text">${todo.text}</span>
+                <span class="todo-date">${formattedDate}</span>
+            </div>
             <div class="todo-actions">
-                <button onclick="removeTodo(${index})">Delete</button>
-                <button onclick="editTodo(${index})">Edit</button>
+                <button onclick="editTodo(${index})" class="btn-icon">
+                    <i class="ri-edit-line"></i>
+                </button>
+                <button onclick="removeTodo(${index})" class="btn-icon">
+                    <i class="ri-delete-bin-line"></i>
+                </button>
             </div>
         `;
         todoList.appendChild(li);
