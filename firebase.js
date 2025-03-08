@@ -4,7 +4,8 @@ import {
     getAuth, 
     GoogleAuthProvider, 
     setPersistence, 
-    browserLocalPersistence 
+    browserLocalPersistence,
+    signInWithPopup // Add this import
 } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 import { getMessaging } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging.js";
@@ -28,28 +29,33 @@ const messaging = getMessaging(app);
 const googleProvider = new GoogleAuthProvider();
 
 // Configure auth persistence properly
-try {
-    await setPersistence(auth, browserLocalPersistence);
-} catch (error) {
-    console.error('Auth persistence error:', error);
-}
+const initAuth = async () => {
+    try {
+        await setPersistence(auth, browserLocalPersistence);
+    } catch (error) {
+        console.error('Auth persistence error:', error);
+    }
+};
+
+// Call initAuth immediately
+initAuth();
 
 // Add additional scopes for Google OAuth
 googleProvider.setCustomParameters({
-  prompt: 'select_account',
-  access_type: 'offline',
-  login_hint: 'user@example.com'
+    prompt: 'select_account',
+    access_type: 'offline',
+    login_hint: 'user@example.com'
 });
 
 // Add specific scopes
 googleProvider.addScope('https://www.googleapis.com/auth/userinfo.email');
 googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
 
-
 export { 
     auth, 
     db, 
     messaging, 
     googleProvider,
-    browserLocalPersistence
+    browserLocalPersistence,
+    signInWithPopup // Add this export
 };

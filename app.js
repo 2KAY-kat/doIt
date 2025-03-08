@@ -1,7 +1,13 @@
 // Import Firebase modules (ES Module syntax)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging.js";
-import { auth, db, googleProvider, signInWithPopup } from './firebase.js';
+import { 
+    auth, 
+    db, 
+    messaging, 
+    googleProvider, 
+    signInWithPopup 
+} from './firebase.js';
 import { collection, doc, setDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
 let currentUser = null;
@@ -82,7 +88,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+// const messaging = getMessaging(app); // This line is removed to avoid redeclaration
 
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
